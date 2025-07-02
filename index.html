@@ -1845,7 +1845,6 @@ function useAllCharacterIngredients(characterId) {
     }
 }
 
-// Функції інвентаря
 function updateInventoryDisplay() {
     const container = document.getElementById('groupInventory');
     
@@ -1871,7 +1870,11 @@ function updateInventoryDisplay() {
                 <div class="flex space-x-2">
                     <button onclick="addIngredientToCooking(${JSON.stringify(ingredient).replace(/"/g, '&quot;')})" 
                             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                        🍳 До бенкету
+                        🍳 До пиру
+                    </button>
+                    <button onclick="showCharacterSelectionFromInventory(${index})" 
+                            class="bg-purple-500 hover:bg-purple-600 text-white px-2 py-1 rounded text-xs">
+                        👤 До персонажа
                     </button>
                     <button onclick="removeFromInventory(${index})" 
                             class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
@@ -1885,6 +1888,111 @@ function updateInventoryDisplay() {
     updateStats();
 }
 
+// Нова функція для показу вибору персонажа з групового інвентаря
+function showCharacterSelectionFromInventory(ingredientIndex) {
+    const ingredient = gameState.inventory[ingredientIndex];
+    
+    if (!ingredient) {
+        showNotification('Інгредієнт не знайдено!', 'error');
+        return;
+    }
+    
+    if (gameState.characters.length === 0) {
+        showNotification('Спочатку додайте персонажів!', 'warning');
+        return;
+    }
+    
+    // Перевіряємо, чи є персонажі з вільним місцем
+    const availableCharacters = gameState.characters.filter(char => 
+        char.inventory.length < char.highestAttribute
+    );
+    
+    if (availableCharacters.length === 0) {
+        showNotification('У всіх персонажів заповнений інвентар!', 'warning');
+        return;
+    }
+    
+    const modalContent = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="characterSelectionModal">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 class="text-lg font-semibold mb-4">👤 Перенести до персонажа</h3>
+                <div class="mb-4">
+                    <div class="font-medium text-gray-800 mb-2">
+                        ${ingredient.type === 'beast' ? '🐻' : ingredient.type === 'flower' ? '🌸' : '⭐'} ${ingredient.part}
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        ${Object.entries(ingredient.flavors).map(([flavor, intensity]) => 
+                            `${diceTypes[flavor].emoji} ${diceTypes[flavor].name}(${intensity})`
+                        ).join(', ')}
+                    </div>
+                    ${ingredient.property ? `<div class="text-xs text-purple-600 italic mt-1">${ingredient.property}</div>` : ''}
+                </div>
+                <div class="space-y-2 mb-4 max-h-48 overflow-y-auto">
+                    ${availableCharacters.map(character => `
+                        <button onclick="moveFromInventoryToCharacter(${ingredientIndex}, ${character.id})" 
+                                class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-medium text-blue-800">${character.name}</div>
+                                    <div class="text-sm text-blue-600">
+                                        Інвентар: ${character.inventory.length} / ${character.highestAttribute}
+                                    </div>
+                                </div>
+                                <div class="text-blue-500">
+                                    ${character.highestAttribute - character.inventory.length} вільно
+                                </div>
+                            </div>
+                        </button>
+                    `).join('')}
+                </div>
+                <button onclick="closeCharacterSelection()" 
+                        class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">
+                    Скасувати
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+}
+
+// Функція для перенесення з групового інвентаря до персонажа
+function moveFromInventoryToCharacter(ingredientIndex, characterId) {
+    const ingredient = gameState.inventory[ingredientIndex];
+    const character = gameState.characters.find(c => c.id === characterId);
+    
+    if (!ingredient) {
+        showNotification('Інгредієнт не знайдено!', 'error');
+        return;
+    }
+    
+    if (!character) {
+        showNotification('Персонажа не знайдено!', 'error');
+        return;
+    }
+    
+    if (character.inventory.length >= character.highestAttribute) {
+        showNotification(`У ${character.name} немає місця в інвентарі!`, 'warning');
+        return;
+    }
+    
+    // Переносимо інгредієнт
+    character.inventory.push({
+        ...ingredient,
+        id: Date.now() + Math.random()
+    });
+    
+    // Видаляємо з групового інвентаря
+    gameState.inventory.splice(ingredientIndex, 1);
+    
+    updateInventoryDisplay();
+    loadCharacters();
+    saveGameState();
+    closeCharacterSelection();
+    
+    showNotification(`${ingredient.part} перенесено до інвентаря ${character.name}!`, 'success');
+}
+    
 function removeFromInventory(index) {
     gameState.inventory.splice(index, 1);
     updateInventoryDisplay();
