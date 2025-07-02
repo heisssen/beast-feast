@@ -64,7 +64,7 @@
 
             <!-- Вкладка приготування -->
             <div id="cooking" class="tab-content active p-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6">🍳 Приготування пиру</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">🍳 Приготування бенкету</h2>
                 
                 <!-- Поточний рівень групи -->
                 <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
@@ -196,7 +196,7 @@
                 
                 <div class="flex space-x-3 mb-6">
                     <button onclick="startCooking()" class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105">
-                        🍳 Приготувати пир
+                        🍳 Приготувати бенкет
                     </button>
                     <button onclick="loadFromInventory()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg">
                         📦 З інвентаря
@@ -407,7 +407,7 @@
                                 <div class="text-sm text-orange-600">🌿 Гіркий(1) + 🌶️ Пряний(2)</div>
                             </button>
                             <button onclick="loadQuickRecipe('wyvern')" class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200">
-                                <div class="font-medium text-purple-800">Язик віврени</div>
+                                <div class="font-medium text-purple-800">Язик віверни</div>
                                 <div class="text-sm text-purple-600">🍋 🌶️ 🔮 (по 1)</div>
                             </button>
                         </div>
@@ -504,7 +504,7 @@
 
                     <!-- Приготування -->
                     <div class="border-l-4 border-purple-500 pl-4">
-                        <h3 class="text-lg font-semibold text-purple-800 mb-2">🍳 Приготування пиру</h3>
+                        <h3 class="text-lg font-semibold text-purple-800 mb-2">🍳 Приготування бенкету</h3>
                         <div class="bg-purple-50 p-4 rounded-lg">
                             <ol class="text-gray-700 space-y-2">
                                 <li><strong>1.</strong> Оберіть інгредієнти та киньте відповідні кубики смаку</li>
@@ -601,7 +601,7 @@
             </div>
             <div class="flex space-x-3">
                 <button onclick="addSelectedToMeal()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
-                    ✅ Додати обрані до пиру
+                    ✅ Додати обрані до бенкету
                 </button>
                 <button onclick="closeInventoryModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">
                     Скасувати
@@ -902,7 +902,7 @@ function addSelectedToMeal() {
     closeInventoryModal();
     switchTab('cooking');
     
-    showNotification(`Додано ${addedCount} інгредієнтів до пиру`, 'success');
+    showNotification(`Додано ${addedCount} інгредієнтів до бенкету`, 'success');
 }
 
 function closeInventoryModal() {
@@ -1033,7 +1033,7 @@ function proceedCookingLogic() {
                 <p class="text-green-800 font-semibold">
                     ✅ Останній інгредієнт: ${flavorInfo.emoji} ${flavorInfo.name} (к${die.sides}) = ${die.value}
                 </p>
-                <p class="text-green-700 mt-2">Пир готовий! 🍽️</p>
+                <p class="text-green-700 mt-2">бенкет готовий! 🍽️</p>
             </div>
         `;
         
@@ -1113,7 +1113,7 @@ function showRemoveOptions() {
     
     output.innerHTML += `
         <div class="mt-4 p-4 bg-white border border-gray-300 rounded-lg">
-            <p class="text-gray-800 mb-3">Виберіть що прибрати з пиру:</p>
+            <p class="text-gray-800 mb-3">Виберіть що прибрати з бенкету:</p>
             ${options}
             <button onclick="removeAndReroll()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
                 🗑️ Прибрати та продовжити
@@ -1200,19 +1200,19 @@ function showMealRating(rating) {
     
     if (rating >= 20) {
         qualityClass = 'bg-purple-100 border-purple-300 text-purple-800';
-        qualityText = 'Легендарний пир!';
+        qualityText = 'Легендарний бенкет!';
         qualityEmoji = '🏆';
     } else if (rating >= 15) {
         qualityClass = 'bg-orange-100 border-orange-300 text-orange-800';
-        qualityText = 'Відмінний пир!';
+        qualityText = 'Відмінний бенкет!';
         qualityEmoji = '⭐';
     } else if (rating >= 10) {
         qualityClass = 'bg-green-100 border-green-300 text-green-800';
-        qualityText = 'Хороший пир!';
+        qualityText = 'Хороший бенкет!';
         qualityEmoji = '👍';
     } else if (rating >= 5) {
         qualityClass = 'bg-yellow-100 border-yellow-300 text-yellow-800';
-        qualityText = 'Звичайний пир';
+        qualityText = 'Звичайний бенкет';
         qualityEmoji = '🍽️';
     }
     
@@ -1221,7 +1221,7 @@ function showMealRating(rating) {
             <div class="text-center">
                 <div class="text-4xl mb-2">${qualityEmoji}</div>
                 <p class="font-bold text-xl mb-2">
-                    Рейтинг пиру: ${detail} = ${rating}
+                    Рейтинг бенкету: ${detail} = ${rating}
                 </p>
                 <p class="text-lg">
                     ${qualityText}
@@ -1305,7 +1305,7 @@ function showCookingButtons() {
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
             <button onclick="resetCooking()" 
                     class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
-                🍽️ Приготувати новий пир
+                🍽️ Приготувати новий бенкет
             </button>
             <button onclick="openRecipeModal()" 
                     class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
@@ -1475,7 +1475,7 @@ function displayGeneratedIngredients(containerId, ingredients) {
                     <div class="flex flex-col space-y-1 ml-2">
                         <button onclick="addIngredientToCooking(${JSON.stringify(ingredient).replace(/"/g, '&quot;')})" 
                                 class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                            🍳 До пиру
+                            🍳 До бенкету
                         </button>
                         <button onclick="addToGroupInventory(${JSON.stringify(ingredient).replace(/"/g, '&quot;')})" 
                                 class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
@@ -1693,7 +1693,7 @@ function loadCharacters() {
                 <div class="mt-2 pt-2 border-t border-blue-200">
                     <button onclick="useAllCharacterIngredients(${character.id})" 
                             class="w-full bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                        🍳 Використати все для пиру
+                        🍳 Використати все для бенкету
                     </button>
                 </div>
             ` : ''}
@@ -1729,7 +1729,7 @@ function useCharacterIngredient(characterId, itemIndex) {
     saveGameState();
     switchTab('cooking');
     
-    showNotification(`${ingredient.part} від ${character.name} додано до пиру!`, 'success');
+    showNotification(`${ingredient.part} від ${character.name} додано до бенкету!`, 'success');
 }
 
 function moveToGroupInventory(characterId, itemIndex) {
@@ -1767,7 +1767,7 @@ function useAllCharacterIngredients(characterId) {
     const character = gameState.characters.find(c => c.id === characterId);
     if (!character || character.inventory.length === 0) return;
     
-    if (confirm(`Використати всі інгредієнти ${character.name} для пиру?`)) {
+    if (confirm(`Використати всі інгредієнти ${character.name} для бенкету?`)) {
         character.inventory.forEach(ingredient => {
             Object.entries(ingredient.flavors).forEach(([flavor, intensity]) => {
                 const current = parseInt(document.getElementById(flavor).value) || 0;
@@ -1783,7 +1783,7 @@ function useAllCharacterIngredients(characterId) {
         saveGameState();
         switchTab('cooking');
         
-        showNotification(`${count} інгредієнтів від ${character.name} додано до пиру!`, 'success');
+        showNotification(`${count} інгредієнтів від ${character.name} додано до бенкету!`, 'success');
     }
 }
 
@@ -1813,7 +1813,7 @@ function updateInventoryDisplay() {
                 <div class="flex space-x-2">
                     <button onclick="addIngredientToCooking(${JSON.stringify(ingredient).replace(/"/g, '&quot;')})" 
                             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                        🍳 До пиру
+                        🍳 До бенкету
                     </button>
                     <button onclick="removeFromInventory(${index})" 
                             class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
@@ -1889,7 +1889,7 @@ function saveRecipe() {
     const notes = document.getElementById('recipeNotes').value.trim();
     
     if (!name) {
-        showNotification('Введіть назву пиру!', 'warning');
+        showNotification('Введіть назву бенкету!', 'warning');
         return;
     }
     
@@ -2015,7 +2015,7 @@ function exportCookbook() {
             `🥄 Інгредієнти: ${Object.entries(recipe.ingredients).map(([flavor, count]) => 
                 `${diceTypes[flavor].name}(${count})`
             ).join(', ')}\n` +
-            `⭐ Рейтинг пиру: ${recipe.rating}\n` +
+            `⭐ Рейтинг бенкету: ${recipe.rating}\n` +
             `📊 Розподіл: Лікування(${recipe.distribution.healing}) Стрес(${recipe.distribution.stress}) Надія(${recipe.distribution.hope})\n` +
             `🎲 Збіги: [${recipe.matches.join(', ')}]\n` +
             `${recipe.description ? `🍳 Приготування: ${recipe.description}\n` : ''}` +
