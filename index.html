@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beast Feast - Кидач Кубиків</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 min-h-screen p-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6 border-l-4 border-amber-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-amber-800 mb-2">🍖 Beast Feast - Кидач Кубиків</h1>
+                    <p class="text-gray-600">Кулінарні пригоди для Daggerheart</p>
+                </div>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="rollCount">0</div>
+                        <div class="text-xs text-gray-500">Кидків</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600" id="successCount">0</div>
+                        <div class="text-xs text-gray-500">Страв</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="avgRating">0</div>
+                        <div class="text-xs text-gray-500">Серед. рейтинг</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Швидкі поради -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <h3 class="font-semibold text-amber-800 mb-2">💡 Швидкі поради:</h3>
+                <ul class="text-sm text-amber-700 space-y-1">
+                    <li>• Використовуйте <kbd class="px-1 py-0.5 bg-gray-200 rounded text-xs">Ctrl+Enter</kbd> для швидкого кидання</li>
+                    <li>• Збирайте інгредієнти для кулінарної книги вашої групи</li>
+                    <li>• Більше практики = більше токенів досвіду для схожих страв</li>
+                    <li>• Персонаж може нести інгредієнтів = найвища характеристика</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Правила гри -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">📚 Правила Beast Feast</h2>
+                <button onclick="toggleRules()" id="rulesToggle" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                    Приховати правила
+                </button>
+            </div>
+            
+            <div id="rulesContent" class="space-y-6">
+                <!-- Кулінарна книга групи -->
+                <div class="border-l-4 border-pink-500 pl-4">
+                    <h3 class="text-lg font-semibold text-pink-800 mb-2">📖 Кулінарна книга групи</h3>
+                    <div class="bg-pink-50 p-4 rounded-lg">
+                        <p class="text-gray-700 mb-2">
+                            <strong>Ваша група створює спільну кулінарну книгу!</strong> Візьміть невеликий блокнот, який ви будете ділитися, 
+                            та прикрасьте його (наклейки, кольорові маркери та фарби дуже заохочуються).
+                        </p>
+                        <p class="text-gray-700 mb-2">
+                            Під час відпочинку записуйте кожен рецепт, включаючи:
+                        </p>
+                        <ul class="text-gray-700 ml-4 space-y-1">
+                            <li>• <strong>Назву страви</strong></li>
+                            <li>• <strong>Інгредієнти</strong> та їх профілі смаку</li>
+                            <li>• <strong>Спосіб приготування</strong></li>
+                            <li>• <strong>Як вийшло</strong> (рейтинг страви)</li>
+                        </ul>
+                        <p class="text-gray-700 mt-2">
+                            <strong>Важливо:</strong> Чим більше персонажі практикують приготування страв з однаковим профілем смаку, 
+                            тим легше стає готувати такі комбінації!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Основна концепція -->
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h3 class="text-lg font-semibold text-green-800 mb-2">🎯 Як це працює</h3>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-gray-700 mb-2">
+                            Під час відпочинку персонажі відновлюються, готуючи страви з інгредієнтів, зібраних у печерах.
+                        </p>
+                        <p class="text-gray-700 mb-2">
+                            <strong>Мета:</strong> Отримати збіги при кидані кубиків смаку, щоб приготувати успішну страву!
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Інвентар:</strong> Персонаж може нести кількість інгредієнтів = значення його найвищої характеристики.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Смаки та кубики -->
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">🎲 Смаки та їх кубики</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div class="flex items-center space-x-3 p-3 bg-pink-50 rounded-lg border border-pink-200">
+                            <span class="text-2xl">🍯</span>
+                            <div>
+                                <div class="font-medium text-pink-800">Солодкий (к4)</div>
+                                <div class="text-sm text-pink-600">Найбільше шансів збігів</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <span class="text-2xl">🧂</span>
+                            <div>
+                                <div class="font-medium text-blue-800">Солоний (к6)</div>
+                                <div class="text-sm text-blue-600">Базовий смак</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                            <span class="text-2xl">🌿</span>
+                            <div>
+                                <div class="font-medium text-green-800">Гіркий (к8)</div>
+                                <div class="text-sm text-green-600">Помірний ризик</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <span class="text-2xl">🍋</span>
+                            <div>
+                                <div class="font-medium text-yellow-800">Кислий (к10)</div>
+                                <div class="text-sm text-yellow-600">Високий ризик</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                            <span class="text-2xl">🥩</span>
+                            <div>
+                                <div class="font-medium text-red-800">Смачний (к12)</div>
+                                <div class="text-sm text-red-600">Найвищий ризик</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                            <span class="text-2xl">🔮</span>
+                            <div>
+                                <div class="font-medium text-purple-800">Дивний (к20)</div>
+                                <div class="text-sm text-purple-600">Непередбачувані ефекти</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Як грати -->
+                <div class="border-l-4 border-orange-500 pl-4">
+                    <h3 class="text-lg font-semibold text-orange-800 mb-3">🍳 Як готувати страви</h3>
+                    <div class="space-y-3">
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">Крок 1: Підготовка інгредієнтів</h4>
+                            <ul class="text-gray-700 space-y-1 ml-4">
+                                <li>• Оберіть інгредієнти з вашого інвентаря</li>
+                                <li>• Введіть кількість кубиків для кожного смаку (сила смаку = кількість кубиків)</li>
+                                <li>• Додайте токени досвіду, якщо ви вже готували схожі страви</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">Крок 2: Кидання кубиків смаку</h4>
+                            <ul class="text-gray-700 space-y-1 ml-4">
+                                <li>• Киньте всі кубики одночасно</li>
+                                <li>• Шукайте <strong>збіги</strong> - кубики з однаковими значеннями</li>
+                                <li>• Збіги означають успішне змішування смаків</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">Крок 3: Обробка результатів</h4>
+                            <ul class="text-gray-700 space-y-1 ml-4">
+                                <li>• <strong>Є збіги?</strong> - Видаляємо всі кубики зі збігами, залишаємо значення</li>
+                                <li>• <strong>Немає збігів?</strong> - Вибираємо один кубик/токен для видалення</li>
+                                <li>• Перекидаємо решту кубиків</li>
+                                <li>• Повторюємо до одного кубика</li>
+                                <li>• <strong>Рейтинг страви</strong> = сума всіх унікальних збігів</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Приклади інгредієнтів -->
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h3 class="text-lg font-semibold text-purple-800 mb-3">🍄 Базові інгредієнти</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">Звичайні інгредієнти:</h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• <strong>🍄 Грибні шапки:</strong> Гіркий(1) + Смачний(2)</li>
+                                <li>• <strong>🥩 М'ясо лютовепра:</strong> Смачний(3)</li>
+                                <li>• <strong>🥛 Молоко печерного кабана:</strong> Солоний(1) + Смачний(1)</li>
+                                <li>• <strong>🌿 Корінь рілі:</strong> Гіркий(1)</li>
+                                <li>• <strong>💧 Слина кислотного дракона:</strong> Кислий(2)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">Екзотичні інгредієнти:</h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• <strong>👅 Язик віврени:</strong> Кислий(1) + Смачний(1) + Дивний(1)</li>
+                                <li>• <strong>🧠 Мозок слизу:</strong> Солодкий(1) + Гіркий(2)</li>
+                                <li>• <strong>💎 Ниркові камені огра:</strong> Солодкий(1) + Дивний(1)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Просунуті інгредієнти -->
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h3 class="text-lg font-semibold text-red-800 mb-3">⭐ Особливі інгредієнти</h3>
+                    <p class="text-gray-700 mb-3">
+                        Ці рідкісні інгредієнти можна отримати лише з Лідерів або Босів. Вони мають особливі властивості:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-800 mb-2">🦌 Мозок черепа газелі</h4>
+                            <p class="text-sm text-gray-700 mb-2">Солодкий(1) + Солоний(1) + Кислий(1)</p>
+                            <p class="text-xs text-red-700 bg-red-100 p-2 rounded">
+                                <strong>Швидкість:</strong> +1 до Спритності до наступного короткого відпочинку
+                            </p>
+                        </div>
+                        
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-800 mb-2">🥛 Молоко священної корови</h4>
+                            <p class="text-sm text-gray-700 mb-2">Дивний(1)</p>
+                            <p class="text-xs text-red-700 bg-red-100 p-2 rounded">
+                                <strong>Остання крапля:</strong> Коли залишається один кубик, додай його до рейтингу страви
+                            </p>
+                        </div>
+                        
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-800 mb-2">🦂 Отрута скорпіона-привида</h4>
+                            <p class="text-sm text-gray-700 mb-2">Кислий(1) + Смачний(1)</p>
+                            <p class="text-xs text-red-700 bg-red-100 p-2 rounded">
+                                <strong>Гостра:</strong> Якщо збіги на 8+, не можна очистити стрес цією стравою
+                            </p>
+                        </div>
+                        
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-800 mb-2">🌸 Квітка смерті</h4>
+                            <p class="text-sm text-gray-700 mb-2">Гіркий(2)</p>
+                            <p class="text-xs text-red-700 bg-red-100 p-2 rounded">
+                                <strong>Ризикована:</strong> Немає збігів = очисти все + 3 Надія. Є збіги = кидок смерті
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Токени досвіду -->
+                <div class="border-l-4 border-yellow-500 pl-4">
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">🪙 Токени досвіду</h3>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-gray-700 mb-2">
+                            <strong>Як отримати:</strong> За успішне приготування страв з певним профілем смаку група отримує токени.
+                        </p>
+                        <p class="text-gray-700 mb-2">
+                            <strong>Як використовувати:</strong> При відсутності збігів можна "витратити" токен замість видалення кубика.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Прогресія:</strong> Чим більше готуєте схожі страви, тим легше стає їх готувати у майбутньому!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Оцінка результатів -->
+                <div class="border-l-4 border-gray-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">🏆 Рейтинг страв</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-700 mb-3">
+                            <strong>Рейтинг страви</strong> = сума всіх унікальних значень збігів
+                        </p>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+                            <div class="text-center p-2 bg-gray-200 rounded">
+                                <div class="font-bold text-gray-800">0-4</div>
+                                <div class="text-gray-600">Провал</div>
+                            </div>
+                            <div class="text-center p-2 bg-yellow-200 rounded">
+                                <div class="font-bold text-yellow-800">5-9</div>
+                                <div class="text-yellow-600">Звичайна</div>
+                            </div>
+                            <div class="text-center p-2 bg-green-200 rounded">
+                                <div class="font-bold text-green-800">10-14</div>
+                                <div class="text-green-600">Хороша</div>
+                            </div>
+                            <div class="text-center p-2 bg-orange-200 rounded">
+                                <div class="font-bold text-orange-800">15-19</div>
+                                <div class="text-orange-600">Відмінна</div>
+                            </div>
+                            <div class="text-center p-2 bg-purple-200 rounded">
+                                <div class="font-bold text-purple-800">20+</div>
+                                <div class="text-purple-600">Легендарна</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель швидких рецептів та історії -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+            <!-- Швидкі пресети -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🍽️ Швидкі рецепти</h2>
+                <div class="space-y-2">
+                    <button onclick="loadPreset('simple')" class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition-colors">
+                        <div class="font-medium text-green-800">Простий суп</div>
+                        <div class="text-sm text-green-600">🧂 Солоний(1) + 🥩 Смачний(2)</div>
+                    </button>
+                    <button onclick="loadPreset('wyvern')" class="w-full text-left p-3 bg-orange-50 hover:bg-orange-100 rounded-lg border border-orange-200 transition-colors">
+                        <div class="font-medium text-orange-800">Язик віврени</div>
+                        <div class="text-sm text-orange-600">🍋 🥩 🔮 (по 1)</div>
+                    </button>
+                    <button onclick="loadPreset('mushroom')" class="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
+                        <div class="font-medium text-gray-800">Грибні шапки</div>
+                        <div class="text-sm text-gray-600">🌿(1) + 🥩(2)</div>
+                    </button>
+                    <button onclick="loadPreset('complex')" class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 transition-colors">
+                        <div class="font-medium text-purple-800">Магічне рагу</div>
+                        <div class="text-sm text-purple-600">Всі смаки по 1</div>
+                    </button>
+                    <button onclick="loadPreset('special')" class="w-full text-left p-3 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition-colors">
+                        <div class="font-medium text-red-800">Мозок газелі</div>
+                        <div class="text-sm text-red-600">🍯 🧂 🍋 (по 1)</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Історія кидків -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📜 Історія</h2>
+                <div id="historyList" class="space-y-2 max-h-48 overflow-y-auto">
+                    <p class="text-gray-500 text-sm italic">Історія кидків з'явиться тут...</p>
+                </div>
+                <button onclick="clearHistory()" class="mt-3 text-sm text-red-600 hover:text-red-800">Очистити історію</button>
+            </div>
+
+            <!-- Кулінарна книга -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📖 Кулінарна книга групи</h2>
+                <div id="cookbook" class="space-y-2 max-h-48 overflow-y-auto">
+                    <p class="text-gray-500 text-sm italic">Успішні рецепти з'являться тут...</p>
+                </div>
+                <button onclick="exportCookbook()" class="mt-3 text-sm text-blue-600 hover:text-blue-800">Експортувати книгу</button>
+            </div>
+
+            <!-- Генератор інгредієнтів -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">🎲 Випадкові інгредієнти</h2>
+                <div id="randomIngredient" class="mb-4">
+                    <div class="p-3 bg-gray-50 rounded-lg border text-center">
+                        <div class="text-gray-500 text-sm">Натисніть для генерації</div>
+                    </div>
+                </div>
+                <button onclick="generateRandomIngredient()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg mb-2">
+                    Згенерувати інгредієнт
+                </button>
+                <button onclick="addRandomToMeal()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-sm">
+                    Додати до страви
+                </button>
+            </div>
+        </div>
+
+        <!-- Інпути для інгредієнтів -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">🥄 Складники вашої страви</h2>
+                <div class="flex space-x-2">
+                    <button onclick="randomizeIngredients()" class="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-sm transition-colors">
+                        🎲 Випадково
+                    </button>
+                    <button onclick="clearAll()" class="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-sm transition-colors">
+                        🗑️ Очистити
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="ingredient-input" data-flavor="sweet">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-pink-400 rounded-full mr-2"></span>
+                        🍯 Солодкий (к4):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="sweet" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('sweet', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('sweet', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ingredient-input" data-flavor="salty">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-blue-400 rounded-full mr-2"></span>
+                        🧂 Солоний (к6):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="salty" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('salty', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('salty', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ingredient-input" data-flavor="bitter">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+                        🌿 Гіркий (к8):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="bitter" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('bitter', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('bitter', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ingredient-input" data-flavor="sour">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
+                        🍋 Кислий (к10):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="sour" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('sour', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('sour', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ingredient-input" data-flavor="savory">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                        🥩 Смачний (к12):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="savory" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('savory', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('savory', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ingredient-input" data-flavor="weird">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-purple-600 rounded-full mr-2"></span>
+                        🔮 Дивний (к20):
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="weird" min="0" max="10" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('weird', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('weird', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span class="inline-block w-3 h-3 bg-gray-400 rounded-full mr-2"></span>
+                        🪙 Токени досвіду:
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="token" min="0" max="20" value="0" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                            <button onclick="adjustInput('token', -1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">-</button>
+                            <button onclick="adjustInput('token', 1)" class="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Передбачення результату -->
+            <div id="prediction" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                <p class="text-blue-800 text-sm"></p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="startRolling()" id="rollButton" 
+                        class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center space-x-2">
+                    <span>🍳</span>
+                    <span>Приготувати страву</span>
+                </button>
+                <button onclick="savePreset()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                    💾
+                </button>
+            </div>
+        </div>
+
+        <!-- Результати -->
+        <div id="results" class="bg-white rounded-lg shadow-lg p-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 Результати приготування</h2>
+            <div id="output" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для збереження рецепту -->
+    <div id="saveModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold mb-4">💾 Додати до кулінарної книги</h3>
+            <input type="text" id="recipeName" placeholder="Назва страви..." 
+                   class="w-full p-3 border border-gray-300 rounded-lg mb-4">
+            <textarea id="recipeNotes" placeholder="Нотатки про приготування (необов'язково)..." 
+                      class="w-full p-3 border border-gray-300 rounded-lg mb-4 h-20 resize-none"></textarea>
+            <div class="flex space-x-3">
+                <button onclick="confirmSavePreset()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+                    Зберегти у книзі
+                </button>
+                <button onclick="closeSaveModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">
+                    Скасувати
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Дані кубиків з емодзі
+        const diceTypes = {
+            'sweet': { sides: 4, name: 'Солодкий', color: 'pink', emoji: '🍯' },
+            'salty': { sides: 6, name: 'Солоний', color: 'blue', emoji: '🧂' },
+            'bitter': { sides: 8, name: 'Гіркий', color: 'green', emoji: '🌿' },
+            'sour': { sides: 10, name: 'Кислий', color: 'yellow', emoji: '🍋' },
+            'savory': { sides: 12, name: 'Смачний', color: 'red', emoji: '🥩' },
+            'weird': { sides: 20, name: 'Дивний', color: 'purple', emoji: '🔮' }
+        };
+
+        // Базові інгредієнти
+        const baseIngredients = [
+            { name: "Грибні шапки", ingredients: { bitter: 1, savory: 2 }, emoji: "🍄" },
+            { name: "М'ясо лютовепра", ingredients: { savory: 3 }, emoji: "🥩" },
+            { name: "Молоко печерного кабана", ingredients: { salty: 1, savory: 1 }, emoji: "🥛" },
+            { name: "Корінь рілі", ingredients: { bitter: 1 }, emoji: "🌿" },
+            { name: "Слина кислотного дракона", ingredients: { sour: 2 }, emoji: "💧" },
+            { name: "Язик віврени", ingredients: { sour: 1, savory: 1, weird: 1 }, emoji: "👅" },
+            { name: "Мозок слизу", ingredients: { sweet: 1, bitter: 2 }, emoji: "🧠" },
+            { name: "Ниркові камені огра", ingredients: { sweet: 1, weird: 1 }, emoji: "💎" },
+            { name: "Печерні ягоди", ingredients: { sweet: 2, sour: 1 }, emoji: "🫐" },
+            { name: "Мох сталактитів", ingredients: { bitter: 1, weird: 1 }, emoji: "🟢" },
+            { name: "Кров летючої миші", ingredients: { salty: 1, weird: 1 }, emoji: "🩸" },
+            { name: "Печерна риба", ingredients: { salty: 2, savory: 1 }, emoji: "🐟" }
+        ];
+
+        // Змінні стану
+        let currentDice = [];
+        let matchedValues = [];
+        let rollCount = parseInt(localStorage.getItem('beastFeastRollCount') || '0');
+        let successCount = parseInt(localStorage.getItem('beastFeastSuccessCount') || '0');
+        let totalRating = parseInt(localStorage.getItem('beastFeastTotalRating') || '0');
+        let gameHistory = JSON.parse(localStorage.getItem('beastFeastHistory') || '[]');
+        let cookbook = JSON.parse(localStorage.getItem('beastFeastCookbook') || '[]');
+        let savedPresets = JSON.parse(localStorage.getItem('beastFeastPresets') || '{}');
+        let currentRandomIngredient = null;
+
+        // Ініціалізація
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            loadHistory();
+            loadCookbook();
+            setupKeyboardShortcuts();
+            updatePrediction();
+        });
+
+        // Функція для приховування/показу правил
+        function toggleRules() {
+            const content = document.getElementById('rulesContent');
+            const button = document.getElementById('rulesToggle');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = 'Приховати правила';
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Показати правила';
+            }
+        }
+
+        // Генератор випадкових інгредієнтів
+        function generateRandomIngredient() {
+            const ingredient = baseIngredients[Math.floor(Math.random() * baseIngredients.length)];
+            currentRandomIngredient = ingredient;
+            
+            const container = document.getElementById('randomIngredient');
+            const ingredientText = Object.entries(ingredient.ingredients)
+                .map(([flavor, count]) => `${diceTypes[flavor].emoji}${count}`)
+                .join(' ');
+            
+            container.innerHTML = `
+                <div class="p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
+                    <div class="text-center">
+                        <div class="text-2xl mb-1">${ingredient.emoji}</div>
+                        <div class="font-semibold text-indigo-800">${ingredient.name}</div>
+                        <div class="text-sm text-indigo-600">${ingredientText}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addRandomToMeal() {
+            if (!currentRandomIngredient) {
+                showNotification('Спочатку згенеруйте інгредієнт!', 'warning');
+                return;
+            }
+            
+            Object.entries(currentRandomIngredient.ingredients).forEach(([flavor, count]) => {
+                const current = parseInt(document.getElementById(flavor).value) || 0;
+                document.getElementById(flavor).value = current + count;
+            });
+            
+            updatePrediction();
+            showNotification(`Додано: ${currentRandomIngredient.name}`, 'success');
+        }
+
+        // Клавіатурні скорочення
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    startRolling();
+                }
+                if (e.key === 'Escape') {
+                    closeSaveModal();
+                }
+            });
+        }
+
+        // Основна функція кидання кубиків
+        function startRolling() {
+            const dicePool = [];
+            let idx = 0;
+            
+            for (const [flavor, info] of Object.entries(diceTypes)) {
+                const num = parseInt(document.getElementById(flavor).value) || 0;
+                for (let i = 0; i < num; i++) {
+                    dicePool.push({
+                        flavor: flavor,
+                        sides: info.sides,
+                        idx: idx++,
+                        value: null
+                    });
+                }
+            }
+
+            if (dicePool.length === 0) {
+                showNotification('Додайте інгредієнти для приготування!', 'warning');
+                return;
+            }
+
+            rollDicePool(dicePool);
+            currentDice = dicePool;
+            matchedValues = [];
+            rollCount++;
+            
+            updateStats();
+            addToHistory();
+            
+            const resultsSection = document.getElementById('results');
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            const output = document.getElementById('output');
+            output.innerHTML = '<h3 class="text-lg font-semibold text-gray-800 mb-3">🎲 Результати кидання кубиків:</h3>';
+            
+            displayDice(currentDice);
+            proceedLogic();
+        }
+
+        // Функція відображення кубиків
+        function displayDice(dicePool, containerId = 'output') {
+            const container = document.getElementById(containerId);
+            
+            if (dicePool.length === 0) {
+                container.innerHTML += '<p class="text-gray-600">Кубиків не залишилось.</p>';
+                return;
+            }
+
+            const grouped = {};
+            dicePool.forEach(die => {
+                if (!grouped[die.flavor]) {
+                    grouped[die.flavor] = [];
+                }
+                grouped[die.flavor].push(die.value);
+            });
+
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+            for (const [flavor, rolls] of Object.entries(grouped)) {
+                const flavorInfo = diceTypes[flavor];
+                html += `
+                    <div class="p-4 rounded-lg border-2 bg-${flavorInfo.color}-50 border-${flavorInfo.color}-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="text-2xl">${flavorInfo.emoji}</span>
+                            <span class="font-medium text-${flavorInfo.color}-800">${flavorInfo.name} (к${flavorInfo.sides})</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${rolls.map(roll => `
+                                <div class="w-10 h-10 bg-${flavorInfo.color}-200 border-2 border-${flavorInfo.color}-400 rounded-lg flex items-center justify-center font-bold text-${flavorInfo.color}-800">
+                                    ${roll}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            
+            container.innerHTML += html;
+        }
+
+        // Базові функції гри
+        function rollDie(sides) {
+            return Math.floor(Math.random() * sides) + 1;
+        }
+
+        function rollDicePool(dicePool) {
+            dicePool.forEach(die => {
+                die.value = rollDie(die.sides);
+            });
+            return dicePool;
+        }
+
+        function findDuplicates(dicePool) {
+            const values = dicePool.map(die => die.value);
+            const valueCounts = {};
+            values.forEach(value => {
+                valueCounts[value] = (valueCounts[value] || 0) + 1;
+            });
+            
+            const duplicates = {};
+            for (const [value, count] of Object.entries(valueCounts)) {
+                if (count > 1) {
+                    duplicates[parseInt(value)] = count;
+                }
+            }
+            return duplicates;
+        }
+
+        function diceWithoutValues(dicePool, values) {
+            const valueSet = new Set(values);
+            return dicePool.filter(die => !valueSet.has(die.value));
+        }
+
+        function updateStats() {
+            document.getElementById('rollCount').textContent = rollCount;
+            document.getElementById('successCount').textContent = successCount;
+            
+            const avgRating = successCount > 0 ? Math.round(totalRating / successCount * 10) / 10 : 0;
+            document.getElementById('avgRating').textContent = avgRating;
+            
+            localStorage.setItem('beastFeastRollCount', rollCount.toString());
+            localStorage.setItem('beastFeastSuccessCount', successCount.toString());
+            localStorage.setItem('beastFeastTotalRating', totalRating.toString());
+        }
+
+        function addToHistory() {
+            const ingredients = {};
+            Object.keys(diceTypes).forEach(flavor => {
+                const value = parseInt(document.getElementById(flavor).value) || 0;
+                if (value > 0) ingredients[flavor] = value;
+            });
+            
+            const token = parseInt(document.getElementById('token').value) || 0;
+            
+            const entry = {
+                timestamp: new Date().toLocaleString('uk-UA'),
+                ingredients: ingredients,
+                token: token,
+                id: Date.now()
+            };
+            
+            gameHistory.unshift(entry);
+            gameHistory = gameHistory.slice(0, 15);
+            
+            localStorage.setItem('beastFeastHistory', JSON.stringify(gameHistory));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            if (gameHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-gray-500 text-sm italic">Історія кидків з\'явиться тут...</p>';
+                return;
+            }
+            
+            historyList.innerHTML = gameHistory.map(entry => `
+                <div class="p-2 bg-gray-50 rounded border text-xs">
+                    <div class="font-medium text-gray-800">${entry.timestamp.split(', ')[1]}</div>
+                    <div class="text-gray-600">
+                        ${Object.entries(entry.ingredients).map(([flavor, count]) => 
+                            `${diceTypes[flavor].emoji}${count}`
+                        ).join(' ')}
+                        ${entry.token > 0 ? ` 🪙${entry.token}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('Очистити всю історію?')) {
+                gameHistory = [];
+                localStorage.removeItem('beastFeastHistory');
+                loadHistory();
+            }
+        }
+
+        // Швидкі пресети
+        function loadPreset(type) {
+            clearAll();
+            
+            switch(type) {
+                case 'simple':
+                    document.getElementById('salty').value = 1;
+                    document.getElementById('savory').value = 2;
+                    break;
+                case 'wyvern':
+                    document.getElementById('sour').value = 1;
+                    document.getElementById('savory').value = 1;
+                    document.getElementById('weird').value = 1;
+                    break;
+                case 'mushroom':
+                    document.getElementById('bitter').value = 1;
+                    document.getElementById('savory').value = 2;
+                    break;
+                case 'complex':
+                    Object.keys(diceTypes).forEach(flavor => {
+                        document.getElementById(flavor).value = 1;
+                    });
+                    break;
+                case 'special':
+                    document.getElementById('sweet').value = 1;
+                    document.getElementById('salty').value = 1;
+                    document.getElementById('sour').value = 1;
+                    break;
+            }
+            
+            updatePrediction();
+            showNotification('Рецепт завантажено', 'success');
+        }
+
+        function adjustInput(flavor, delta) {
+            const input = document.getElementById(flavor);
+            const newValue = Math.max(0, Math.min(20, parseInt(input.value) + delta));
+            input.value = newValue;
+            updatePrediction();
+        }
+
+        function clearAll() {
+            Object.keys(diceTypes).forEach(flavor => {
+                document.getElementById(flavor).value = 0;
+            });
+            document.getElementById('token').value = 0;
+            updatePrediction();
+        }
+
+        function randomizeIngredients() {
+            clearAll();
+            const numIngredients = Math.floor(Math.random() * 3) + 1;
+            
+            for (let i = 0; i < numIngredients; i++) {
+                const flavors = Object.keys(diceTypes);
+                const flavor = flavors[Math.floor(Math.random() * flavors.length)];
+                const current = parseInt(document.getElementById(flavor).value) || 0;
+                document.getElementById(flavor).value = current + Math.floor(Math.random() * 3) + 1;
+            }
+            
+            updatePrediction();
+            showNotification('Випадкові інгредієнти додані!', 'info');
+        }
+
+        function updatePrediction() {
+            const prediction = document.getElementById('prediction');
+            const totalDice = Object.keys(diceTypes).reduce((sum, flavor) => {
+                return sum + (parseInt(document.getElementById(flavor).value) || 0);
+            }, 0);
+            
+            if (totalDice === 0) {
+                prediction.classList.add('hidden');
+                return;
+            }
+            
+            const token = parseInt(document.getElementById('token').value) || 0;
+            let message = `🎲 ${totalDice} кубиків смаку`;
+            
+            if (token > 0) {
+                message += ` + 🪙 ${token} токенів досвіду`;
+            }
+            
+            // Розрахунок ймовірності збігів
+            if (totalDice >= 8) {
+                message += `. Дуже висока ймовірність збігів! 🎯`;
+            } else if (totalDice >= 5) {
+                message += `. Висока ймовірність збігів 🤞`;
+            } else if (totalDice >= 3) {
+                message += `. Помірна ймовірність збігів 😐`;
+            } else {
+                message += `. Низька ймовірність збігів 😅`;
+            }
+            
+            prediction.querySelector('p').textContent = message;
+            prediction.classList.remove('hidden');
+        }
+
+        function showNotification(message, type = 'info') {
+            const colors = {
+                'success': 'bg-green-500',
+                'warning': 'bg-yellow-500',
+                'error': 'bg-red-500',
+                'info': 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Продовження логіки гри
+        function proceedLogic() {
+            const output = document.getElementById('output');
+            const duplicates = findDuplicates(currentDice);
+            
+            if (currentDice.length === 1) {
+                const die = currentDice[0];
+                const flavorInfo = diceTypes[die.flavor];
+                output.innerHTML += `
+                    <div class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">
+                        <p class="text-green-800 font-semibold">
+                            ✅ Останній інгредієнт: ${flavorInfo.emoji} ${flavorInfo.name} (к${die.sides}) = ${die.value}
+                        </p>
+                        <p class="text-green-700 mt-2">Страва готова! 🍽️</p>
+                    </div>
+                `;
+                
+                if (matchedValues.length > 0) {
+                    showGrandTotal();
+                    successCount++;
+                    const rating = calculateMealRating();
+                    totalRating += rating;
+                    updateStats();
+                    addToCookbook(rating);
+                }
+                showResetButton();
+                return;
+            }
+
+            if (Object.keys(duplicates).length === 0) {
+                output.innerHTML += `
+                    <div class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg">
+                        <p class="text-yellow-800">⚠️ Смаки не змішались. Виберіть що прибрати:</p>
+                    </div>
+                `;
+                showRemoveOptions();
+            } else {
+                output.innerHTML += '<div class="mt-4 p-4 bg-blue-100 border border-blue-300 rounded-lg">';
+                output.innerHTML += '<p class="text-blue-800 font-semibold mb-2">🎯 Смаки злились успішно:</p>';
+                
+                for (const [value, count] of Object.entries(duplicates)) {
+                    const flavors = currentDice
+                        .filter(die => die.value === parseInt(value))
+                        .map(die => diceTypes[die.flavor].name);
+                    const uniqueFlavors = [...new Set(flavors)];
+                    
+                    output.innerHTML += `<p class="text-blue-700">• Значення ${value} (${count} разів): ${uniqueFlavors.join(', ')}</p>`;
+                }
+                output.innerHTML += '</div>';
+
+                for (const value of Object.keys(duplicates)) {
+                    const numValue = parseInt(value);
+                    if (!matchedValues.includes(numValue)) {
+                        matchedValues.push(numValue);
+                    }
+                }
+
+                const matchedSet = Object.keys(duplicates).map(v => parseInt(v));
+                const remaining = diceWithoutValues(currentDice, matchedSet);
+                
+                if (remaining.length === 0) {
+                    output.innerHTML += `
+                        <div class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">
+                            <p class="text-green-800 font-semibold">🎉 Всі смаки ідеально збалансовані!</p>
+                        </div>
+                    `;
+                    if (matchedValues.length > 0) {
+                        showGrandTotal();
+                        successCount++;
+                        const rating = calculateMealRating();
+                        totalRating += rating;
+                        updateStats();
+                        addToCookbook(rating);
+                    }
+                    showResetButton();
+                    return;
+                }
+
+                output.innerHTML += `
+                    <div class="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
+                        <p class="text-gray-800">🔄 ${remaining.length} інгредієнтів потребують додаткового змішування.</p>
+                    </div>
+                `;
+                
+                showRerollButton(remaining);
+            }
+        }
+
+        function showRemoveOptions() {
+            const output = document.getElementById('output');
+            
+            let options = '<select id="removeSelect" class="w-full p-2 border border-gray-300 rounded-md mb-3">';
+            
+            currentDice.forEach(die => {
+                const flavorInfo = diceTypes[die.flavor];
+                options += `<option value="die-${die.idx}">${flavorInfo.emoji} ${flavorInfo.name} (к${die.sides}) → ${die.value}</option>`;
+            });
+            
+            const tokenValue = parseInt(document.getElementById('token').value) || 0;
+            if (tokenValue > 0) {
+                options += `<option value="token">🪙 Токен досвіду (${tokenValue})</option>`;
+            }
+            
+            options += '</select>';
+            
+            output.innerHTML += `
+                <div class="mt-4 p-4 bg-white border border-gray-300 rounded-lg">
+                    <p class="text-gray-800 mb-3">Виберіть що прибрати зі страви:</p>
+                    ${options}
+                    <button onclick="removeAndReroll()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        🗑️ Прибрати та продовжити
+                    </button>
+                </div>
+            `;
+        }
+
+        function removeAndReroll() {
+            const select = document.getElementById('removeSelect');
+            const value = select.value;
+            
+            if (value.startsWith('die-')) {
+                const idx = parseInt(value.split('-')[1]);
+                currentDice = currentDice.filter(die => die.idx !== idx);
+            } else if (value === 'token') {
+                const tokenInput = document.getElementById('token');
+                tokenInput.value = Math.max(0, parseInt(tokenInput.value) - 1);
+            }
+            
+            rollDicePool(currentDice);
+            
+            const output = document.getElementById('output');
+            output.innerHTML = '<h3 class="text-lg font-semibold text-gray-800 mb-3">🔄 Продовжуємо готування:</h3>';
+            displayDice(currentDice);
+            proceedLogic();
+        }
+
+        function showRerollButton(remaining) {
+            const output = document.getElementById('output');
+            
+            output.innerHTML += `
+                <div class="mt-4">
+                    <button onclick="rerollRemaining(${JSON.stringify(remaining).replace(/"/g, '&quot;')})" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                        🎲 Перемішати решту інгредієнтів
+                    </button>
+                </div>
+            `;
+        }
+
+        function rerollRemaining(remaining) {
+            currentDice = remaining;
+            rollDicePool(currentDice);
+            
+            const output = document.getElementById('output');
+            output.innerHTML = '<h3 class="text-lg font-semibold text-gray-800 mb-3">🔄 Перемішуємо решту:</h3>';
+            displayDice(currentDice);
+            proceedLogic();
+        }
+
+        function calculateMealRating() {
+            const uniqueValues = [...new Set(matchedValues)];
+            return uniqueValues.reduce((sum, val) => sum + val, 0);
+        }
+
+        function showGrandTotal() {
+            const output = document.getElementById('output');
+            const uniqueValues = [...new Set(matchedValues)].sort((a, b) => a - b);
+            const grandTotal = uniqueValues.reduce((sum, val) => sum + val, 0);
+            const detail = uniqueValues.join(' + ');
+            
+            let qualityClass = 'bg-gray-100 border-gray-300 text-gray-800';
+            let qualityText = 'Провал';
+            let qualityEmoji = '😞';
+            
+            if (grandTotal >= 20) {
+                qualityClass = 'bg-purple-100 border-purple-300 text-purple-800';
+                qualityText = 'Легендарна страва!';
+                qualityEmoji = '🏆';
+            } else if (grandTotal >= 15) {
+                qualityClass = 'bg-orange-100 border-orange-300 text-orange-800';
+                qualityText = 'Відмінна страва!';
+                qualityEmoji = '⭐';
+            } else if (grandTotal >= 10) {
+                qualityClass = 'bg-green-100 border-green-300 text-green-800';
+                qualityText = 'Хороша страва!';
+                qualityEmoji = '👍';
+            } else if (grandTotal >= 5) {
+                qualityClass = 'bg-yellow-100 border-yellow-300 text-yellow-800';
+                qualityText = 'Звичайна страва';
+                qualityEmoji = '🍽️';
+            }
+            
+            output.innerHTML += `
+                <div class="mt-4 p-6 ${qualityClass} border-2 rounded-lg">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">${qualityEmoji}</div>
+                        <p class="font-bold text-xl mb-2">
+                            Рейтинг страви: ${detail} = ${grandTotal}
+                        </p>
+                        <p class="text-lg">
+                            ${qualityText}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showResetButton() {
+            const output = document.getElementById('output');
+            
+            output.innerHTML += `
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="resetGame()" 
+                            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+                        🍽️ Приготувати нову страву
+                    </button>
+                    <button onclick="saveCurrentRecipe()" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+                        📖 Додати до кулінарної книги
+                    </button>
+                </div>
+            `;
+        }
+
+        // Кулінарна книга
+        function addToCookbook(rating) {
+            const ingredients = {};
+            Object.keys(diceTypes).forEach(flavor => {
+                const value = parseInt(document.getElementById(flavor).value) || 0;
+                if (value > 0) ingredients[flavor] = value;
+            });
+            
+            const token = parseInt(document.getElementById('token').value) || 0;
+            const uniqueValues = [...new Set(matchedValues)];
+            
+            const recipe = {
+                id: Date.now(),
+                name: `Страва ${new Date().toLocaleDateString('uk-UA')}`,
+                ingredients: ingredients,
+                token: token,
+                result: uniqueValues,
+                rating: rating,
+                timestamp: new Date().toLocaleString('uk-UA'),
+                notes: ''
+            };
+            
+            cookbook.unshift(recipe);
+            cookbook = cookbook.slice(0, 50);
+            
+            localStorage.setItem('beastFeastCookbook', JSON.stringify(cookbook));
+            loadCookbook();
+        }
+
+        function loadCookbook() {
+            const cookbookDiv = document.getElementById('cookbook');
+            
+            if (cookbook.length === 0) {
+                cookbookDiv.innerHTML = '<p class="text-gray-500 text-sm italic">Успішні рецепти групи з\'являться тут...</p>';
+                return;
+            }
+            
+            cookbookDiv.innerHTML = cookbook.map(recipe => {
+                const ingredientText = Object.entries(recipe.ingredients)
+                    .map(([flavor, count]) => `${diceTypes[flavor].emoji}${count}`)
+                    .join(' ');
+                
+                let qualityClass = 'from-gray-50 to-gray-100 border-gray-300';
+                if (recipe.rating >= 20) qualityClass = 'from-purple-50 to-purple-100 border-purple-300';
+                else if (recipe.rating >= 15) qualityClass = 'from-orange-50 to-orange-100 border-orange-300';
+                else if (recipe.rating >= 10) qualityClass = 'from-green-50 to-green-100 border-green-300';
+                else if (recipe.rating >= 5) qualityClass = 'from-yellow-50 to-yellow-100 border-yellow-300';
+                
+                return `
+                    <div class="p-3 bg-gradient-to-r ${qualityClass} rounded border text-xs">
+                        <div class="font-medium text-gray-800 mb-1">${recipe.name}</div>
+                        <div class="text-gray-600 mb-1">
+                            ${ingredientText}
+                            ${recipe.token > 0 ? ` 🪙${recipe.token}` : ''}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm font-semibold text-gray-700">
+                                Рейтинг: ${recipe.rating}
+                            </div>
+                            <button onclick="loadRecipe(${recipe.id})" class="text-blue-600 hover:text-blue-800 text-xs">
+                                📋 Повторити
+                            </button>
+                        </div>
+                        ${recipe.notes ? `<div class="text-xs text-gray-500 mt-1 italic">${recipe.notes}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadRecipe(id) {
+            const recipe = cookbook.find(r => r.id === id);
+            if (!recipe) return;
+            
+            clearAll();
+            
+            Object.entries(recipe.ingredients).forEach(([flavor, count]) => {
+                document.getElementById(flavor).value = count;
+            });
+            
+            if (recipe.token > 0) {
+                document.getElementById('token').value = recipe.token;
+            }
+            
+            updatePrediction();
+            showNotification(`Завантажено: ${recipe.name}`, 'success');
+        }
+
+        function exportCookbook() {
+            if (cookbook.length === 0) {
+                showNotification('Кулінарна книга порожня!', 'warning');
+                return;
+            }
+            
+            const text = "🍖 КУЛІНАРНА КНИГА ГРУПИ - BEAST FEAST\n" +
+                "=" + "=".repeat(50) + "\n\n" +
+                cookbook.map(recipe => 
+                    `📖 ${recipe.name}\n` +
+                    `🗓️ Дата: ${recipe.timestamp}\n` +
+                    `🥄 Інгредієнти: ${Object.entries(recipe.ingredients).map(([flavor, count]) => 
+                        `${diceTypes[flavor].name}(${count})`
+                    ).join(', ')}\n` +
+                    `${recipe.token > 0 ? `🪙 Токени досвіду: ${recipe.token}\n` : ''}` +
+                    `⭐ Рейтинг страви: ${recipe.rating}\n` +
+                    `📝 Збіги: [${recipe.result.join(', ')}]\n` +
+                    `${recipe.notes ? `📋 Нотатки: ${recipe.notes}\n` : ''}` +
+                    `${'-'.repeat(40)}\n\n`
+                ).join('');
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `beast-feast-cookbook-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Кулінарна книга експортована!', 'success');
+        }
+
+        // Модальне вікно для збереження
+        function savePreset() {
+            document.getElementById('saveModal').classList.remove('hidden');
+            document.getElementById('recipeName').focus();
+        }
+
+        function closeSaveModal() {
+            document.getElementById('saveModal').classList.add('hidden');
+            document.getElementById('recipeName').value = '';
+            document.getElementById('recipeNotes').value = '';
+        }
+
+        function confirmSavePreset() {
+            const name = document.getElementById('recipeName').value.trim();
+            const notes = document.getElementById('recipeNotes').value.trim();
+            
+            if (!name) {
+                showNotification('Введіть назву страви!', 'warning');
+                return;
+            }
+            
+            const ingredients = {};
+            Object.keys(diceTypes).forEach(flavor => {
+                const value = parseInt(document.getElementById(flavor).value) || 0;
+                if (value > 0) ingredients[flavor] = value;
+            });
+            
+            const token = parseInt(document.getElementById('token').value) || 0;
+            
+            // Якщо це збереження після готування
+            if (matchedValues.length > 0) {
+                const uniqueValues = [...new Set(matchedValues)];
+                const rating = uniqueValues.reduce((sum, val) => sum + val, 0);
+                
+                const recipe = {
+                    id: Date.now(),
+                    name: name,
+                    ingredients: ingredients,
+                    token: token,
+                    result: uniqueValues,
+                    rating: rating,
+                    timestamp: new Date().toLocaleString('uk-UA'),
+                    notes: notes
+                };
+                
+                cookbook.unshift(recipe);
+                cookbook = cookbook.slice(0, 50);
+                localStorage.setItem('beastFeastCookbook', JSON.stringify(cookbook));
+                loadCookbook();
+            } else {
+                // Збереження як пресет
+                savedPresets[name] = { ingredients, token, notes };
+                localStorage.setItem('beastFeastPresets', JSON.stringify(savedPresets));
+            }
+            
+            closeSaveModal();
+            showNotification(`"${name}" збережено до кулінарної книги!`, 'success');
+        }
+
+        function saveCurrentRecipe() {
+            savePreset();
+        }
+
+        function resetGame() {
+            Object.keys(diceTypes).forEach(flavor => {
+                document.getElementById(flavor).value = 0;
+            });
+            document.getElementById('token').value = 0;
+            
+            currentDice = [];
+            matchedValues = [];
+            
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('output').innerHTML = '';
+            
+            updatePrediction();
+            showNotification('Готові до нових кулінарних експериментів! 🍳', 'success');
+        }
+
+        // Оновлення передбачення при зміні інпутів
+        Object.keys(diceTypes).forEach(flavor => {
+            document.getElementById(flavor).addEventListener('input', updatePrediction);
+        });
+        document.getElementById('token').addEventListener('input', updatePrediction);
+    </script>
+</body>
+</html>
